@@ -2,10 +2,10 @@ const userRepo = require("../dataAcess/user");
 const { buildFailedResponse, buildCreateResponse, notFoundResponse, unAuthorizedResponse } = require("../utils/responses");
 const { comparePassword } = require("../utils/user");
 
-const createUser = async (payload, sessionId) => {
+const createUser = async (payload) => {
   try {
-    const userInstance = await userRepo.createUser(payload, sessionId);
-    userInstance.sessionAuth = sessionId;
+    const userInstance = await userRepo.createUser(payload);
+    
     const savedUser = await userRepo.saveUser(userInstance);
 
     return buildCreateResponse({

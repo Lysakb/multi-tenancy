@@ -1,4 +1,4 @@
-const tenantServices = require("../services/tenant.service");
+const tenantServices = require("../services/organization.service");
 
 const createUser = async (req, res) => {
   try {

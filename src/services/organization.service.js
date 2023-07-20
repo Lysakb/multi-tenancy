@@ -1,7 +1,10 @@
 const { db_name } = require("../config/env");
-const tenantRepo = require("../dataAcess/tenant");
-const tenantApiAccessRepo = require('../dataAcess/TenantAccessToken');
-const { generateApiSecretKey, generateApiPublicKey } = require("../utils/accessToken");
+const tenantRepo = require("../dataAcess/organization");
+const tenantApiAccessRepo = require("../dataAcess/orgAccessToken");
+const {
+  generateApiSecretKey,
+  generateApiPublicKey,
+} = require("../utils/accessToken");
 const { generateApiKey } = require("../utils/refreshToken");
 const { buildCreateResponse } = require("../utils/responses");
 
@@ -60,12 +63,14 @@ const createTenant = async (payload) => {
       }
     );
 
-    const saveTokenApiData = await tenantApiAccessRepo.saveUser(tokenApiInstance)
+    const saveTokenApiData = await tenantApiAccessRepo.saveUser(
+      tokenApiInstance
+    );
     const data = await tenantRepo.saveUser(createNewTenant);
 
     return buildCreateResponse({
       data: data,
-      apiKey: apiKey
+      apiKey: apiKey,
     });
   } catch (error) {
     console.log(error);

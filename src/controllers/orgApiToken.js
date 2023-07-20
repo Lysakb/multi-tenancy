@@ -1,4 +1,4 @@
-const tenantApiTokenServices = require("../services/tenantApiAcessToken");
+const tenantApiTokenServices = require("../services/orgApiAcessToken");
 
 const createUser = async (req, res) => {
   try {

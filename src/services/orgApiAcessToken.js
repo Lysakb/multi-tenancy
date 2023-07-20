@@ -1,4 +1,4 @@
-const { createUser, saveUser } = require("../dataAcess/TenantAccessToken");
+const { createUser, saveUser } = require("../dataAcess/orgAccessToken");
 const { generateApiSecretKey } = require("../utils/accessToken");
 const { generateApiKey } = require("../utils/refreshToken");
 const { buildCreateResponse } = require("../utils/responses");
@@ -25,16 +25,15 @@ const createApiAccessToken = async (payload) => {
     payload.usage = apiUsageLog;
 
     const createUserToken = await createUser(payload);
-    const saveToken = await saveUser(createUserToken)
+    const saveToken = await saveUser(createUserToken);
 
     return buildCreateResponse({
       data: saveToken,
-      apiKey
-    })
-
+      apiKey,
+    });
   } catch (error) {
     throw new Error(error.message);
   }
 };
 
-module.exports = {createApiAccessToken};
+module.exports = { createApiAccessToken };

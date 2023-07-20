@@ -1,8 +1,8 @@
 const { getConnection } = require("../helper/connectionManager");
-const tenantApiTokenModel = require("../models/tenantApiAccessToken");
+const tenantModel = require("../models/organization.model");
 
 const createUser = async (data) => {
-  const model = getConnection().model("ApiAccessToken");
+  const model = getConnection().model("Tenant");
   return await new model(data);
 };
 
@@ -11,7 +11,7 @@ const saveUser = async (userInstance) => {
 };
 
 const getAll = async (query = () => {}) => {
-  const model = getConnection().model("ApiAccessToken");
+  const model = getConnection().model("Tenant");
   const skip = Number(query.skip) || 0;
   const limit = Number(query.limit) || 10;
 
@@ -24,9 +24,7 @@ const getAll = async (query = () => {}) => {
 };
 
 const getOne = async (query = {}) => {
-  const model = getConnection().model("ApiAccessToken");
-  const foundData = await model.findOne(query);
-  return foundData
+  return await tenantModel.findOne(query);
 };
 
 module.exports = Object.freeze({

@@ -6,7 +6,7 @@ const { saveUser } = require("../dataAcess/user");
 const createUser = async (req, res) => {
   try {
     const user = await userServices.createUser(req.body);
-    const sessionAuth = await sessionService.create(
+    const sessionAuth = await sessionService.createApiKey(
       user.data._id,
       SESSION.LOGIN_VALIDITY_IN_SECONDS,
       req.get("User-Agent")
@@ -15,7 +15,6 @@ const createUser = async (req, res) => {
     // user.sessionAuth = sessionAuth.savedSessionAuth._id;
     user.sessionAuth = sessionAuth.data;
     
-    console.log(user.data);
     return res.status(user.statusCode).json(user);
   } catch (error) {
     console.log(error);
