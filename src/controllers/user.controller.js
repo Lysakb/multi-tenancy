@@ -1,10 +1,19 @@
 const userServices = require("../services/user.service");
 const sessionService = require("../services/sessionAuth.service");
 const { SESSION } = require("../constants/enum");
-const { saveUser } = require("../dataAcess/user");
+const orgServices = require("../services/organization.service");
+const userRepo = require("../dataAcess/user");
+const { getOne } = require("../dataAcess/organization");
 
 const createUser = async (req, res) => {
   try {
+
+    const organizationName = req.headers.tenant; // This should be the db_name of the organization
+    const organization = await orgServices.getOne({
+     db_name: organizationName,
+    });
+
+    // console.log(organization)
     const user = await userServices.createUser(req.body);
     const sessionAuth = await sessionService.createApiKey(
       user.data._id,
@@ -12,8 +21,16 @@ const createUser = async (req, res) => {
       req.get("User-Agent")
     );
 
-    // user.sessionAuth = sessionAuth.savedSessionAuth._id;
-    user.sessionAuth = sessionAuth.data;
+    // const organizationName = req.headers.tenant;
+    // console.log(organizationName);
+    // let { id} = req.headers.tenant;
+    // const organization = await orgServices.getOne(
+    //   {name: organizationName}
+    // );
+    // console.log(organization);
+    user.data.sessionAuth = sessionAuth.data;
+    user.data.organization = organization._id;
+    await user.data.save();
     
     return res.status(user.statusCode).json(user);
   } catch (error) {

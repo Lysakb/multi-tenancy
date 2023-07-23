@@ -24,7 +24,9 @@ const getAll = async (query = () => {}) => {
 };
 
 const getOne = async (query = {}) => {
-  return await tenantModel.findOne(query);
+  const model = getConnection().model('tenant');
+  const data = await model.findOne(query);
+  return data;
 };
 
 module.exports = Object.freeze({

@@ -10,7 +10,7 @@ const v1Routes = express.Router();
 // v1Routes.use("/admin", connectionResolver.setAdminDb);
 
 // admin
-const adminApi = require("../controllers/tenant.controller");
+const adminApi = require("../controllers/organization.controller");
 v1Routes.post("/admin/tenant", connectionResolver.resolveAdmin, adminApi.createUser);
 v1Routes.get("/admin/tenant", connectionResolver.resolveAdmin, adminApi.getAllUsers);
 
@@ -28,7 +28,7 @@ v1Routes.get(
 );
 
 // tenantAccessKey
-const tenantApiToken = require("../controllers/tenantApiToken");
+const tenantApiToken = require("../controllers/orgApiToken");
 v1Routes.post(
   "/admin/tenant/token", connectionResolver.resolveAdmin,
   tenantApiToken.createUser

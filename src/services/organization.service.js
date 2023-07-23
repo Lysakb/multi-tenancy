@@ -6,7 +6,7 @@ const {
   generateApiPublicKey,
 } = require("../utils/accessToken");
 const { generateApiKey } = require("../utils/refreshToken");
-const { buildCreateResponse } = require("../utils/responses");
+const { buildCreateResponse, buildResponse } = require("../utils/responses");
 
 const createTenant = async (payload) => {
   try {
@@ -78,18 +78,21 @@ const createTenant = async (payload) => {
   }
 };
 
-const getAllTenants = async (query = {}) => {
+const getOne = async (query = {}) => {
   try {
-    const user = await tenantRepo.getAll(query);
-    if (user.length === 0) {
-      return notFoundResponse({ message: "No user found!" });
-    }
-    console.log(user);
+   const data = await tenantRepo.getOne(query);
+   if (!data) {
+    throw new Error('No organization found')
+   }
 
-    return buildResponse({
-      data: user,
-    });
+  //  const tenantApiToken = await tenantApiAccessRepo.getOne({organization: data._id});
+  //  if(!tenantApiToken) {
+  //   throw new Error('No  organization apiToken found')
+  //  }
+
+   return buildResponse({data})
   } catch (error) {
+    console.log(error)
     throw new Error(error.message);
   }
 };
@@ -109,6 +112,6 @@ const getUserById = async (id) => {
 
 module.exports = {
   createTenant,
-  getAllTenants,
+  getOne,
   getUserById,
 };

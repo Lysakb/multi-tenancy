@@ -56,7 +56,6 @@ function adminDbConnection(BASE_DB_URI) {
 
     // require all schemas !?
     db.model("tenant", orgSchema);
-    db.model("User", userSchema);
     db.model("ApiAccessToken", orgApiTokenSchema);
     return db;
   } catch (error) {
