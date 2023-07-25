@@ -21,7 +21,7 @@ v1Routes.post(
   connectionResolver.resolveCustomer,
   userApi.createUser
 );
-v1Routes.get(
+v1Routes.post(
   "/tenant/user/login",
   connectionResolver.resolveCustomer,
   userApi.login

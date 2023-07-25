@@ -1,17 +1,23 @@
 const userRepo = require("../dataAcess/user");
-const { buildFailedResponse, buildCreateResponse, notFoundResponse, unAuthorizedResponse } = require("../utils/responses");
+const sessionService = require("../services/sessionAuth.service");
+const {
+  buildResponse,
+  buildCreateResponse,
+  notFoundResponse,
+  unAuthorizedResponse,
+  buildFailedResponse,
+} = require("../utils/responses");
 const { comparePassword } = require("../utils/user");
 
 const createUser = async (payload) => {
   try {
     const userInstance = await userRepo.createUser(payload);
-    
+
     const savedUser = await userRepo.saveUser(userInstance);
 
     return buildCreateResponse({
       data: savedUser,
-      message:
-        "User registered successfully",
+      message: "User registered successfully",
     });
   } catch (error) {
     throw new Error(`${error}`);
@@ -33,14 +39,24 @@ const loginUser = async (payload) => {
       return unAuthorizedResponse({ message: "Invalid Password" });
     }
 
+    const sessionAuth = await sessionService.getOne({ user: foundUser._id });
+    if (!sessionAuth) {
+      return buildFailedResponse({ message: "No session api key" });
+    }
+
+    const responseData = {
+      foundUser,
+      tokenType: sessionAuth.data.token_type,
+      tokenHash: sessionAuth.data.token_hash,
+    };
+
     return buildResponse({
-      data: foundUser
+      responseData,
     });
   } catch (error) {
     throw new Error(`${error}`);
   }
 };
-
 
 const getAllUsers = async (query = {}) => {
   try {
