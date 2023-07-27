@@ -3,6 +3,9 @@ const express = require("express");
 // connection resolver for tenant
 const connectionResolver = require("../helper/connectionResolver");
 
+//middleware
+const {authMiddleware} = require('../middlewares/auth.middleware');
+
 // Mounting routes
 const v1Routes = express.Router();
 
@@ -25,6 +28,11 @@ v1Routes.post(
   "/tenant/user/login",
   connectionResolver.resolveCustomer,
   userApi.login
+);
+v1Routes.get(
+  "/tenant/user",
+  connectionResolver.resolveCustomer, authMiddleware,
+  userApi.getAllUsers
 );
 
 // tenantAccessKey

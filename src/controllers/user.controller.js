@@ -9,7 +9,7 @@ const sessionAuth = require("../models/sessionAuth");
 const createUser = async (req, res) => {
   try {
     const user = await userServices.createUser(req.body);
-    const sessionAuth = await sessionService.createApiKey(
+    const sessionAuth = await sessionService.create(
       user.data._id,
       SESSION.LOGIN_VALIDITY_IN_SECONDS,
       req.get("User-Agent")
@@ -44,8 +44,8 @@ const login = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
   try {
-    const data = await tenantServices.getAllTenants(req.query);
-    res.status(data.statusCode).json(data);
+    const data = await userServices.getAllUsers(req.query);
+    return res.status(data.statusCode).json(data);
   } catch (error) {
     res.status(500).json({
       message: "Unable to get users at the moment",

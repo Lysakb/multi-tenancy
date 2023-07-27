@@ -1,5 +1,7 @@
+const { JWT_SECRET } = require("../config/env");
 const userRepo = require("../dataAcess/user");
 const sessionService = require("../services/sessionAuth.service");
+const { generateAccessToken } = require("../utils/accessToken");
 const {
   buildResponse,
   buildCreateResponse,
@@ -40,20 +42,26 @@ const loginUser = async (payload) => {
     }
 
     const sessionAuth = await sessionService.getOne({ user: foundUser._id });
-    if (!sessionAuth) {
-      return buildFailedResponse({ message: "No session api key" });
-    }
 
-    const responseData = {
-      foundUser,
-      tokenType: sessionAuth.data.token_type,
-      tokenHash: sessionAuth.data.token_hash,
+    const accessToken = await generateAccessToken(
+      foundUser._id,
+      sessionAuth.data._id,
+      JWT_SECRET
+    );
+
+    const user = {
+      id: foundUser._id,
+      email: foundUser.email,
+      role: foundUser.role,
+      sessionId: sessionAuth.data._id,
     };
 
     return buildResponse({
-      responseData,
+      user,
+      accessToken,
     });
   } catch (error) {
+    console.log(error)
     throw new Error(`${error}`);
   }
 };
@@ -64,7 +72,6 @@ const getAllUsers = async (query = {}) => {
     if (user.length === 0) {
       return notFoundResponse({ message: "No user found!" });
     }
-    console.log(user);
 
     return buildResponse({
       data: user,

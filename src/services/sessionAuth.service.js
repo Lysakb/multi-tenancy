@@ -42,25 +42,14 @@ const create = async (userId, validityInSeconds, userAgent) => {
   };
   const modelInstance = await sessionAuthRepo.create(newSessionAuth);
   const savedSessionAuth = await sessionAuthRepo.save(modelInstance);
-  const accessToken = await generateAccessToken(
-    userId,
-    modelInstance._id,
-    JWT_SECRET
-  );
 
   if (!savedSessionAuth || savedSessionAuth?.statusCode == 404) {
     throw new Error("User not found");
   }
 
-  const responseData = {
-    refreshToken,
-    accessToken,
-    sessionAuthId: modelInstance.id,
-    savedSessionAuth,
-  };
-
   return buildResponse({
-    data: responseData,
+    data: savedSessionAuth,
+    refreshToken
   });
 };
 
