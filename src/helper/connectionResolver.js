@@ -9,7 +9,7 @@ const { getConnectionByTenant, getAdminConnection } = require("./connectionManag
  * Get the connection instance for the given tenant's name and set it to the current context.
  */
 const resolveCustomer = (req, res, next) => {
-  const tenant = req.headers.tenant || "Quiickops";
+  const tenant = req.headers.tenant;
   console.log("tenant middleware... ", { tenant });
 
   if (!tenant) {

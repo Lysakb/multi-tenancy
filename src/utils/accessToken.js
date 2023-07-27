@@ -12,10 +12,10 @@ const ACCESS_TOKEN_EXPIRESIN = 24 * 60 * 60; // this is validate for 24hrs
  * @param {string} phoneNumber - User phone number // optional
  * @return {string} Ruturn the actual token
  */
-function generateAccessToken(userId, sessionAuthId, JWT_SECRET, phoneNumber = null) {
+function generateAccessToken(userId, sessionAuthId, JWT_SECRET) {
   // console.log({userId, sessionAuthId, JWT_SECRET, phoneNumber})
   return jwt.sign(
-    { phone_number: phoneNumber, sessionAuthId, userId },
+    { sessionAuthId, userId },
     JWT_SECRET,
     {
       algorithm: "HS256",
@@ -24,6 +24,21 @@ function generateAccessToken(userId, sessionAuthId, JWT_SECRET, phoneNumber = nu
       expiresIn: ACCESS_TOKEN_EXPIRESIN
     }
   );
+}
+
+/**
+ * @description Hash a access token.
+ * @param {string} accessToken - The access token to hash.
+ * @returns {string} The hash of the access token.
+ * @example
+ * accessRefreshToken('xx');
+ */
+function hashAccessToken(accessToken) {
+  const accessTokenHash = crypto
+    .createHash("sha256")
+    .update(accessToken)
+    .digest("hex");
+  return accessTokenHash;
 }
 
 const generateApiSecretKey = ({ phone_number, email, initial }) => {

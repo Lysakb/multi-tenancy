@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 // const Bluebird = require("bluebird");
-const Tenant = require("../models/tenant.model");
-const tenantSchema = Tenant.schema;
+const Organization = require("../models/organization.model");
+const orgSchema = Organization.schema;
 const User = require("../models/user.model");
 const userSchema = User.schema;
-const TenantAccessToken = require('../models/tenantApiAccessToken');
-const tenantApiTokenSchema = TenantAccessToken.schema;
-const sessionAuth = require('../models/sessionAuth');
+const orgAccessToken = require("../models/orgApiAccessToken");
+const orgApiTokenSchema = orgAccessToken.schema;
+const sessionAuth = require("../models/sessionAuth");
 const sessionAuthSchema = sessionAuth.schema;
 
 // mongoose.Promise = Bluebird;
@@ -15,8 +15,8 @@ const options = {
   autoIndex: true, // Don't build indexes
   maxPoolSize: 10, // Maintain up to 10 socket connections
   minPoolSize: 5,
-  // serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-  // socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+  serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+  socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
   family: 4, // Use IPv4, skip trying IPv6
   keepAlive: true,
   useNewUrlParser: true,
@@ -34,10 +34,8 @@ function dbConnection(BASE_DB_URI) {
       console.log(`Client Database connected!!`);
     });
 
-    // require all schemas !?
-    // require("../models/tenant.model.js");
-    // db.model("tenant", tenantSchema);
-    db.model('User', userSchema);
+    // require all schemas
+    db.model("User", userSchema);
     db.model("sessionAuth", sessionAuthSchema);
     return db;
   } catch (error) {
@@ -57,10 +55,8 @@ function adminDbConnection(BASE_DB_URI) {
     });
 
     // require all schemas !?
-    // require("../models/tenant.model.js");
-    db.model("tenant", tenantSchema);
-    db.model("User", userSchema);
-    db.model("ApiAccessToken", tenantApiTokenSchema);
+    db.model("tenant", orgSchema);
+    db.model("ApiAccessToken", orgApiTokenSchema);
     return db;
   } catch (error) {
     console.log("AdminDbConnection error", error);
@@ -85,7 +81,5 @@ module.exports = {
   dbConnection,
   adminDbConnection,
   close,
-  disconnected
+  disconnected,
 };
-
-

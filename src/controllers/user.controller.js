@@ -1,7 +1,10 @@
 const userServices = require("../services/user.service");
 const sessionService = require("../services/sessionAuth.service");
 const { SESSION } = require("../constants/enum");
-const { saveUser } = require("../dataAcess/user");
+const orgServices = require("../services/organization.service");
+const userRepo = require("../dataAcess/user");
+const { getOne } = require("../dataAcess/organization");
+const sessionAuth = require("../models/sessionAuth");
 
 const createUser = async (req, res) => {
   try {
@@ -12,10 +15,9 @@ const createUser = async (req, res) => {
       req.get("User-Agent")
     );
 
-    // user.sessionAuth = sessionAuth.savedSessionAuth._id;
-    user.sessionAuth = sessionAuth.data;
-    
-    console.log(user.data);
+    user.data.sessionAuth = sessionAuth.data;
+    await user.data.save();
+
     return res.status(user.statusCode).json(user);
   } catch (error) {
     console.log(error);
@@ -27,20 +29,23 @@ const createUser = async (req, res) => {
 };
 
 const login = async (req, res) => {
-  const user = await userServices.loginUser(req.body);
-   let sessionAuth = await useCases.sessionAuth.create(user.data._id, 
-      SESSION.LOGIN_VALIDITY_IN_SECONDS,
-      req.headers['user-agent']);
-  
-    user.data.sessionAuth = sessionAuth.data;
-    return res.status(200).json(user)
+  try {
+    const user = await userServices.loginUser(req.body);
 
+    return res.status(user.statusCode).json(user);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Unable to login users at the moment",
+      error: error.message,
+    });
+  }
 };
 
 const getAllUsers = async (req, res) => {
   try {
-    const data = await tenantServices.getAllTenants(req.query);
-    res.status(data.statusCode).json(data);
+    const data = await userServices.getAllUsers(req.query);
+    return res.status(data.statusCode).json(data);
   } catch (error) {
     res.status(500).json({
       message: "Unable to get users at the moment",

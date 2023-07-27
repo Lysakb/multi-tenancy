@@ -1,17 +1,25 @@
+const { JWT_SECRET } = require("../config/env");
 const userRepo = require("../dataAcess/user");
-const { buildFailedResponse, buildCreateResponse, notFoundResponse, unAuthorizedResponse } = require("../utils/responses");
+const sessionService = require("../services/sessionAuth.service");
+const { generateAccessToken } = require("../utils/accessToken");
+const {
+  buildResponse,
+  buildCreateResponse,
+  notFoundResponse,
+  unAuthorizedResponse,
+  buildFailedResponse,
+} = require("../utils/responses");
 const { comparePassword } = require("../utils/user");
 
-const createUser = async (payload, sessionId) => {
+const createUser = async (payload) => {
   try {
-    const userInstance = await userRepo.createUser(payload, sessionId);
-    userInstance.sessionAuth = sessionId;
+    const userInstance = await userRepo.createUser(payload);
+
     const savedUser = await userRepo.saveUser(userInstance);
 
     return buildCreateResponse({
       data: savedUser,
-      message:
-        "User registered successfully",
+      message: "User registered successfully",
     });
   } catch (error) {
     throw new Error(`${error}`);
@@ -33,14 +41,30 @@ const loginUser = async (payload) => {
       return unAuthorizedResponse({ message: "Invalid Password" });
     }
 
+    const sessionAuth = await sessionService.getOne({ user: foundUser._id });
+
+    const accessToken = await generateAccessToken(
+      foundUser._id,
+      sessionAuth.data._id,
+      JWT_SECRET
+    );
+
+    const user = {
+      id: foundUser._id,
+      email: foundUser.email,
+      role: foundUser.role,
+      sessionId: sessionAuth.data._id,
+    };
+
     return buildResponse({
-      data: foundUser
+      user,
+      accessToken,
     });
   } catch (error) {
+    console.log(error)
     throw new Error(`${error}`);
   }
 };
-
 
 const getAllUsers = async (query = {}) => {
   try {
@@ -48,7 +72,6 @@ const getAllUsers = async (query = {}) => {
     if (user.length === 0) {
       return notFoundResponse({ message: "No user found!" });
     }
-    console.log(user);
 
     return buildResponse({
       data: user,

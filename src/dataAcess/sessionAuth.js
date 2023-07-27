@@ -23,7 +23,7 @@ const getAll = async (query = () => {}) => {
   return data;
 };
 
-const getOne = async (query = {}) => {
+const getOne = async (query = () => {}) => {
   const model = getConnection().model("sessionAuth");
   return await model.findOne(query);
 };

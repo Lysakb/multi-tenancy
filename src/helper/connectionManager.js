@@ -1,5 +1,5 @@
 const { getNamespace } = require("continuation-local-storage");
-const Tenant = require("../models/tenant.model");
+const Tenant = require("../models/organization.model");
 const tenantSchema = Tenant.schema;
 const { BASE_DB_URI, ADMIN_DB_NAME } = require("../config/env");
 const { adminDbConnection, dbConnection } = require("../setup/database");
