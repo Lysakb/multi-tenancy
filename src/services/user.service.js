@@ -81,22 +81,10 @@ const getAllUsers = async (query = {}) => {
   }
 };
 
-const getUserById = async (id) => {
-  try {
-    const user = await userRepo.getOne({ _id: id });
-
-    if (!user) {
-      return notFoundResponse({ message: "User not found" });
-    }
-    return buildResponse({ data: user });
-  } catch (error) {
-    throw new Error(error.message);
-  }
-};
 
 module.exports = {
   createUser,
   loginUser,
   getAllUsers,
-  getUserById,
+
 };

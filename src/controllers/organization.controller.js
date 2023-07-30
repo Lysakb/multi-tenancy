@@ -12,9 +12,9 @@ const createUser = async (req, res) => {
   }
 };
 
-const getAllUsers = async (req, res) => {
+const getAll = async (req, res) => {
   try {
-    const data = await tenantServices.getAllTenants(req.query);
+    const data = await tenantServices.getAll(req.query);
     res.status(data.statusCode).json(data);
   } catch (error) {
     res.status(500).json({
@@ -24,13 +24,13 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
+const getOne = async (req, res) => {
   try {
-    const data = await tenantServices.getUserById(req.params.id);
+    const data = await tenantServices.getOne(req.params.id);
     res.status(data.statusCode).json(data);
   } catch (error) {
     res.status(500).json({
-      message: "Unable to get user at the moment",
+      message: "Unable to get users at the moment",
       error: error.message,
     });
   }
@@ -38,6 +38,6 @@ const getUserById = async (req, res) => {
 
 module.exports = {
   createUser,
-  getAllUsers,
-  getUserById,
+  getAll,
+  getOne,
 };

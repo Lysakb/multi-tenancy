@@ -78,18 +78,13 @@ const createTenant = async (payload) => {
   }
 };
 
-const getOne = async (query = {}) => {
+const getAll = async (query = {}) => {
   try {
-   const data = await tenantRepo.getOne(query);
-   if (!data) {
+   const data = await tenantRepo.getAll(query);
+   if (data.length === 0) {
     throw new Error('No organization found')
    }
-
-  //  const tenantApiToken = await tenantApiAccessRepo.getOne({organization: data._id});
-  //  if(!tenantApiToken) {
-  //   throw new Error('No  organization apiToken found')
-  //  }
-
+   
    return buildResponse({data})
   } catch (error) {
     console.log(error)
@@ -97,21 +92,30 @@ const getOne = async (query = {}) => {
   }
 };
 
-const getUserById = async (id) => {
+const getOne = async (id) => {
   try {
     const user = await tenantRepo.getOne({ _id: id });
 
     if (!user) {
       return notFoundResponse({ message: "User not found" });
     }
+
+    const tenantApiToken = await tenantApiAccessRepo.getOne({
+      organization: user._id,
+    });
+    if (!tenantApiToken) {
+      throw new Error("No  organization apiToken found");
+    }
+
     return buildResponse({ data: user });
   } catch (error) {
+    console.log(error);
     throw new Error(error.message);
   }
 };
 
 module.exports = {
   createTenant,
+  getAll,
   getOne,
-  getUserById,
 };

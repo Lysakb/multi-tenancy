@@ -19,9 +19,9 @@ const connectAllDb = async () => {
 
     const tenant = await tenantModel.find({}).lean();
 
-    // if (!tenant || tenant.length < 1) {
-    //   throw new Error("No tenant/Organization was found")
-    // };
+    if (!tenant || tenant.length < 1) {
+      throw new Error("No tenant/Organization was found")
+    };
 
     await connectOtherOrg(tenant);
 

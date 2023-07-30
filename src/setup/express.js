@@ -4,10 +4,12 @@ const cors = require('cors');
 const logger = require('morgan');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-const v1Routes = require('../routes/tenant.route');
-require('../setup/database');
-const { connectAllDb } = require('../helper/connectionManager');
-require('../helper/connectionResolver')
+const orgRouter = require('../routes/organization.route');
+const orgApiRouter = require("../routes/orgApi.route");
+const userRouter = require("../routes/user.route");
+// require('../setup/database');
+// const { connectAllDb } = require('../helper/connectionManager');
+// require('../helper/connectionResolver')
 
 const app = express();
 // const router = express.Router();
@@ -25,9 +27,11 @@ app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors());
-connectAllDb();
+// connectAllDb();
 
-app.use("/", v1Routes);
+app.use("/admin", orgRouter);
+app.use("/admin/token", orgApiRouter);
+app.use("/user", userRouter);
 
 //default route
 app.get('/', (req, res) => {
