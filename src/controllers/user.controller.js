@@ -1,10 +1,6 @@
 const userServices = require("../services/user.service");
 const sessionService = require("../services/sessionAuth.service");
 const { SESSION } = require("../constants/enum");
-const orgServices = require("../services/organization.service");
-const userRepo = require("../dataAcess/user");
-const { getOne } = require("../dataAcess/organization");
-const sessionAuth = require("../models/sessionAuth");
 
 const createUser = async (req, res) => {
   try {
@@ -54,21 +50,9 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const getUserById = async (req, res) => {
-  try {
-    const data = await tenantServices.getUserById(req.params.id);
-    res.status(data.statusCode).json(data);
-  } catch (error) {
-    res.status(500).json({
-      message: "Unable to get user at the moment",
-      error: error.message,
-    });
-  }
-};
 
 module.exports = {
   createUser,
   login,
   getAllUsers,
-  getUserById,
 };
